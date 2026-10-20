@@ -19,7 +19,7 @@ Build mode: fast
   Learner check: Open `http://localhost:5173`, switch between presets, click spans to toggle Keep/Trim.
   Commit: `Scaffold app and interactive 4-color heatmap viewer`
 
-- [ ] **2. Constraint Lock engine and real-time safety alert banner**
+- [x] **2. Constraint Lock engine and real-time safety alert banner**
   Becomes usable: Constraint Lock badge in the sidebar actively tracking Green constraints; if any Green rule is toggled to Trim, triggers the high-contrast `⚠️ Constraint Lock Broken: X% Preserved` alert banner with rule listing.
   Why now: The unique safety kernel of ContextDiet that prevents prompt behavioral regressions.
   PRD ref: `prd.md > 3. Constraint Lock Safety Verification`
@@ -51,7 +51,7 @@ Build mode: fast
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — Slice 2 (interactive heatmap & constraint lock alert)
+- [x] Early usable behavior explored — Slice 2 (interactive heatmap & constraint lock alert)
 - [ ] Final kick-the-tires exploration and feedback completed — Slice 4 (complete end-to-end app)
 
 ## Final Review

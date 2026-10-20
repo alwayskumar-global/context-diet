@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { PRESETS } from './data/presets';
 import { Clause, ClauseCategory, PresetPrompt } from './types';
 import { Header } from './components/Header';
 import { HeatmapToolbar } from './components/HeatmapToolbar';
 import { HeatmapViewer } from './components/HeatmapViewer';
 import { ConstraintLockBadge } from './components/ConstraintLockBadge';
-import { Info, Calculator } from 'lucide-react';
+import { NutritionFactsCard } from './components/NutritionFactsCard';
+import { calculateMetrics } from './utils/tokenizer';
+import { Info } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [activePreset, setActivePreset] = useState<PresetPrompt>(PRESETS[0]);
   const [clauses, setClauses] = useState<Clause[]>(PRESETS[0].clauses);
   const [categoryFilter, setCategoryFilter] = useState<ClauseCategory | 'all'>('all');
+  const [requestsPerDay, setRequestsPerDay] = useState<number>(25000);
 
   // Handle preset change
   const handleSelectPreset = (preset: PresetPrompt) => {
@@ -76,6 +79,11 @@ export const App: React.FC = () => {
   const brokenConstraints = constraintClauses.filter((c) => c.isTrimmed);
   const preservedConstraints = constraintClauses.length - brokenConstraints.length;
 
+  // Real-time Token & Cost Metrics
+  const metrics = useMemo(() => {
+    return calculateMetrics(clauses, requestsPerDay);
+  }, [clauses, requestsPerDay]);
+
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans">
       <Header
@@ -87,7 +95,7 @@ export const App: React.FC = () => {
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left / Main Canvas (Heatmap & Triage) */}
-        <section className="lg:col-span-8 space-y-4">
+        <section className="lg:col-span-7 xl:col-span-8 space-y-4">
           {/* Preset Context Banner */}
           <div className="p-4 rounded-xl bg-zinc-900/80 border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
@@ -128,8 +136,8 @@ export const App: React.FC = () => {
           </div>
         </section>
 
-        {/* Right Sidebar (Constraint Lock Engine & Nutrition Card) */}
-        <aside className="lg:col-span-4 space-y-4">
+        {/* Right Sidebar (Constraint Lock Engine & Nutrition Facts Card) */}
+        <aside className="lg:col-span-5 xl:col-span-4 space-y-4">
           {/* Slice 2: Constraint Lock Engine */}
           <ConstraintLockBadge
             totalConstraints={constraintClauses.length}
@@ -139,14 +147,18 @@ export const App: React.FC = () => {
             onRestoreConstraint={handleRestoreConstraint}
           />
 
-          {/* Slice 3 Placeholder */}
-          <div className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/80 text-center text-xs text-zinc-500 font-mono">
-            <Calculator className="w-5 h-5 mx-auto mb-2 text-zinc-400 opacity-60" />
-            <p className="font-semibold text-zinc-400">Nutrition Facts Area</p>
-            <p className="text-[11px] mt-1 text-zinc-500">
-              Slice 3: FDA Nutrition Facts Card & Cost Calculator
-            </p>
-          </div>
+          {/* Slice 3: FDA Nutrition Facts Card */}
+          <NutritionFactsCard
+            metrics={metrics}
+            requestsPerDay={requestsPerDay}
+            onRequestsPerDayChange={setRequestsPerDay}
+            fluffCount={counts.fluff}
+            fluffTrimmed={trimmedCounts.fluff}
+            duplicateCount={counts.duplicate}
+            duplicateTrimmed={trimmedCounts.duplicate}
+            verboseCount={counts.verbose}
+            verboseTrimmed={trimmedCounts.verbose}
+          />
         </aside>
       </main>
     </div>

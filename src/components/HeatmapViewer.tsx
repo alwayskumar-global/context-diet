@@ -21,19 +21,19 @@ export const HeatmapViewer: React.FC<HeatmapViewerProps> = ({
     switch (category) {
       case 'fluff':
         return isTrimmed
-          ? 'bg-red-950/20 text-red-400/50 border-red-900/30 line-through decoration-red-500/60'
+          ? 'bg-red-950/30 text-red-300/80 border-red-900/40 line-through decoration-red-400 decoration-2'
           : 'bg-red-500/15 text-red-200 border-red-500/40 hover:bg-red-500/25';
       case 'duplicate':
         return isTrimmed
-          ? 'bg-amber-950/20 text-amber-400/50 border-amber-900/30 line-through decoration-amber-500/60'
+          ? 'bg-amber-950/30 text-amber-300/80 border-amber-900/40 line-through decoration-amber-400 decoration-2'
           : 'bg-amber-500/15 text-amber-200 border-amber-500/40 hover:bg-amber-500/25';
       case 'verbose':
         return isTrimmed
-          ? 'bg-blue-950/30 text-blue-300 border-blue-500/40'
+          ? 'bg-blue-950/40 text-blue-200 border-blue-500/50'
           : 'bg-blue-500/15 text-blue-200 border-blue-500/40 hover:bg-blue-500/25';
       case 'constraint':
         return isTrimmed
-          ? 'bg-red-950/40 text-red-300 border-red-500/70 shadow-sm'
+          ? 'bg-red-950/50 text-red-200 border-red-500/80 shadow-md'
           : 'bg-emerald-500/15 text-emerald-200 border-emerald-500/40 hover:bg-emerald-500/25';
     }
   };
@@ -129,10 +129,10 @@ export const HeatmapViewer: React.FC<HeatmapViewerProps> = ({
               {/* Text rendering */}
               {clause.category === 'verbose' && isTrimmed && clause.conciseText ? (
                 <div className="space-y-2">
-                  <div className="line-through opacity-50 text-xs text-zinc-400">
+                  <div className="line-through text-xs text-zinc-300/80 decoration-zinc-400 decoration-1">
                     {clause.originalText}
                   </div>
-                  <div className="flex items-start gap-2 p-2 rounded bg-blue-950/50 border border-blue-500/40 text-blue-100 text-xs font-semibold">
+                  <div className="flex items-start gap-2 p-2 rounded bg-blue-950/60 border border-blue-400/50 text-blue-100 text-xs font-semibold">
                     <ArrowRight className="w-3.5 h-3.5 text-blue-400 mt-0.5 shrink-0" />
                     <div>
                       <span className="text-[10px] font-mono text-blue-400 uppercase tracking-wider block font-bold">

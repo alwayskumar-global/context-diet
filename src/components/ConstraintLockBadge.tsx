@@ -124,11 +124,11 @@ export const ConstraintLockBadge: React.FC<ConstraintLockBadgeProps> = ({
           <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400/80 block font-semibold">
             Locked Guardrails ({allConstraints.length}):
           </span>
-          <ul className="space-y-1 text-[11px] font-mono text-emerald-300/90 max-h-36 overflow-y-auto pr-1">
+          <ul className="space-y-1.5 text-[11px] font-mono text-emerald-300/90 max-h-48 overflow-y-auto pr-1">
             {allConstraints.map((c) => (
-              <li key={c.id} className="flex items-start gap-1.5 truncate">
-                <span className="text-emerald-500 shrink-0 font-bold">✓</span>
-                <span className="truncate">{c.originalText}</span>
+              <li key={c.id} className="flex items-start gap-1.5 leading-snug">
+                <span className="text-emerald-400 shrink-0 font-bold mt-0.5">✓</span>
+                <span className="line-clamp-2 text-zinc-300">{c.originalText}</span>
               </li>
             ))}
           </ul>
