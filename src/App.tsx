@@ -4,7 +4,8 @@ import { Clause, ClauseCategory, PresetPrompt } from './types';
 import { Header } from './components/Header';
 import { HeatmapToolbar } from './components/HeatmapToolbar';
 import { HeatmapViewer } from './components/HeatmapViewer';
-import { ShieldCheck, Info } from 'lucide-react';
+import { ConstraintLockBadge } from './components/ConstraintLockBadge';
+import { Info, Calculator } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [activePreset, setActivePreset] = useState<PresetPrompt>(PRESETS[0]);
@@ -31,7 +32,14 @@ export const App: React.FC = () => {
     );
   };
 
-  // Bulk action: trim all fluff and duplicates
+  // Restore specific constraint
+  const handleRestoreConstraint = (id: string) => {
+    setClauses((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, isTrimmed: false } : c))
+    );
+  };
+
+  // Bulk action: trim all fluff, duplicates, and compress verbose prose
   const handleTrimAllFluffAndDuplicates = () => {
     setClauses((prev) =>
       prev.map((c) => {
@@ -62,6 +70,11 @@ export const App: React.FC = () => {
     verbose: clauses.filter((c) => c.category === 'verbose' && c.isTrimmed).length,
     constraint: clauses.filter((c) => c.category === 'constraint' && c.isTrimmed).length,
   };
+
+  // Constraint Lock metrics
+  const constraintClauses = clauses.filter((c) => c.category === 'constraint');
+  const brokenConstraints = constraintClauses.filter((c) => c.isTrimmed);
+  const preservedConstraints = constraintClauses.length - brokenConstraints.length;
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans">
@@ -115,14 +128,23 @@ export const App: React.FC = () => {
           </div>
         </section>
 
-        {/* Right Sidebar Placeholder (Slices 2 & 3: Constraint Lock & Nutrition Card) */}
+        {/* Right Sidebar (Constraint Lock Engine & Nutrition Card) */}
         <aside className="lg:col-span-4 space-y-4">
+          {/* Slice 2: Constraint Lock Engine */}
+          <ConstraintLockBadge
+            totalConstraints={constraintClauses.length}
+            preservedConstraints={preservedConstraints}
+            brokenConstraints={brokenConstraints}
+            allConstraints={constraintClauses}
+            onRestoreConstraint={handleRestoreConstraint}
+          />
+
+          {/* Slice 3 Placeholder */}
           <div className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800/80 text-center text-xs text-zinc-500 font-mono">
-            <ShieldCheck className="w-6 h-6 mx-auto mb-2 text-emerald-400 opacity-60" />
-            <p className="font-semibold text-zinc-400">Sidebar Metrics Area</p>
+            <Calculator className="w-5 h-5 mx-auto mb-2 text-zinc-400 opacity-60" />
+            <p className="font-semibold text-zinc-400">Nutrition Facts Area</p>
             <p className="text-[11px] mt-1 text-zinc-500">
-              Slice 2: Constraint Lock Engine<br />
-              Slice 3: FDA Nutrition Facts Card
+              Slice 3: FDA Nutrition Facts Card & Cost Calculator
             </p>
           </div>
         </aside>

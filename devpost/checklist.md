@@ -9,7 +9,7 @@ Build mode: fast
 
 ## Slices
 
-- [ ] **1. Scaffold project, preset definitions, and interactive 4-color heatmap viewer**
+- [x] **1. Scaffold project, preset definitions, and interactive 4-color heatmap viewer**
   Becomes usable: A running React + Vite app with the top header, 3 built-in bloated presets selectable, rendering the prompt with interactive 4-color highlighted clause spans and click-to-toggle Keep/Trim state.
   Why now: Bootstraps the project, sets up dependencies, and proves the visual kernel and core triage interaction on slice one.
   PRD ref: `prd.md > The Core Journey` (steps 1-4), `prd.md > 1. Preset Loading & Clause Decomposition`, `prd.md > 2. Interactive Heatmap & Triage`
