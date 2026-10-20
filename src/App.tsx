@@ -4,27 +4,48 @@ import { Clause, ClauseCategory, PresetPrompt } from './types';
 import { Header } from './components/Header';
 import { HeatmapToolbar } from './components/HeatmapToolbar';
 import { HeatmapViewer } from './components/HeatmapViewer';
+import { RawEditor } from './components/RawEditor';
 import { ConstraintLockBadge } from './components/ConstraintLockBadge';
 import { NutritionFactsCard } from './components/NutritionFactsCard';
+import { ExportAction } from './components/ExportAction';
 import { calculateMetrics } from './utils/tokenizer';
-import { Info } from 'lucide-react';
+import { parseCustomPrompt } from './utils/parser';
+import { Info, Code, Eye } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const [activePreset, setActivePreset] = useState<PresetPrompt>(PRESETS[0]);
+  const [activePreset, setActivePreset] = useState<PresetPrompt | null>(PRESETS[0]);
   const [clauses, setClauses] = useState<Clause[]>(PRESETS[0].clauses);
   const [categoryFilter, setCategoryFilter] = useState<ClauseCategory | 'all'>('all');
   const [requestsPerDay, setRequestsPerDay] = useState<number>(25000);
+  const [isEditorMode, setIsEditorMode] = useState<boolean>(false);
 
   // Handle preset change
   const handleSelectPreset = (preset: PresetPrompt) => {
     setActivePreset(preset);
     setClauses(preset.clauses.map((c) => ({ ...c })));
     setCategoryFilter('all');
+    setIsEditorMode(false);
+  };
+
+  // Open custom editor
+  const handleOpenCustom = () => {
+    setActivePreset(null);
+    setIsEditorMode(true);
+  };
+
+  // Analyze custom prompt
+  const handleAnalyzeCustom = (text: string) => {
+    const parsedClauses = parseCustomPrompt(text);
+    setClauses(parsedClauses);
+    setIsEditorMode(false);
+    setCategoryFilter('all');
   };
 
   // Reset to initial preset state
   const handleReset = () => {
-    setClauses(activePreset.clauses.map((c) => ({ ...c })));
+    if (activePreset) {
+      setClauses(activePreset.clauses.map((c) => ({ ...c })));
+    }
     setCategoryFilter('all');
   };
 
@@ -88,8 +109,9 @@ export const App: React.FC = () => {
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans">
       <Header
         presets={PRESETS}
-        activePresetId={activePreset.id}
+        activePresetId={isEditorMode ? 'custom' : activePreset?.id || null}
         onSelectPreset={handleSelectPreset}
+        onOpenCustom={handleOpenCustom}
         onReset={handleReset}
       />
 
@@ -101,42 +123,74 @@ export const App: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-bold uppercase px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">
-                  {activePreset.tag}
+                  {isEditorMode ? 'Custom Mode' : activePreset ? activePreset.tag : 'Custom Analysis'}
                 </span>
                 <h1 className="text-base font-bold text-white tracking-tight">
-                  {activePreset.title}
+                  {isEditorMode ? 'Paste & Analyze Custom Prompt' : activePreset ? activePreset.title : 'Custom Analyzed Prompt'}
                 </h1>
               </div>
               <p className="text-xs text-zinc-400 mt-1">
-                {activePreset.description}
+                {isEditorMode 
+                  ? 'Paste raw system instructions, SKILL.md, or CLAUDE.md to decompose into categorized clause heatmaps.'
+                  : activePreset?.description || 'Custom prompt decomposed into categorized clauses.'}
               </p>
             </div>
-            <div className="text-xs font-mono text-zinc-400 flex items-center gap-1.5 shrink-0 bg-zinc-950/60 px-3 py-1.5 rounded-lg border border-zinc-800">
-              <Info className="w-3.5 h-3.5 text-emerald-400" />
-              <span>{clauses.length} clauses detected</span>
+            
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setIsEditorMode(!isEditorMode)}
+                className="text-xs font-mono px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700 flex items-center gap-1.5 transition"
+              >
+                {isEditorMode ? (
+                  <>
+                    <Eye className="w-3.5 h-3.5 text-emerald-400" /> View Heatmap
+                  </>
+                ) : (
+                  <>
+                    <Code className="w-3.5 h-3.5 text-blue-400" /> Edit Raw Prompt
+                  </>
+                )}
+              </button>
+
+              {!isEditorMode && (
+                <div className="text-xs font-mono text-zinc-400 flex items-center gap-1.5 bg-zinc-950/60 px-3 py-1.5 rounded-lg border border-zinc-800">
+                  <Info className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>{clauses.length} clauses</span>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Interactive Heatmap Canvas Card */}
+          {/* Interactive Heatmap or Raw Editor Canvas */}
           <div className="p-4 md:p-5 rounded-xl bg-zinc-900/60 border border-zinc-800 shadow-xl space-y-4">
-            <HeatmapToolbar
-              filter={categoryFilter}
-              onFilterChange={setCategoryFilter}
-              counts={counts}
-              trimmedCounts={trimmedCounts}
-              onTrimAllFluffAndDuplicates={handleTrimAllFluffAndDuplicates}
-              onResetAllKeep={handleResetAllKeep}
-            />
+            {isEditorMode ? (
+              <RawEditor
+                initialText={activePreset ? activePreset.promptText : clauses.map((c) => c.originalText).join('\n')}
+                onAnalyze={handleAnalyzeCustom}
+                onCancel={() => setIsEditorMode(false)}
+              />
+            ) : (
+              <>
+                <HeatmapToolbar
+                  filter={categoryFilter}
+                  onFilterChange={setCategoryFilter}
+                  counts={counts}
+                  trimmedCounts={trimmedCounts}
+                  onTrimAllFluffAndDuplicates={handleTrimAllFluffAndDuplicates}
+                  onResetAllKeep={handleResetAllKeep}
+                />
 
-            <HeatmapViewer
-              clauses={clauses}
-              filter={categoryFilter}
-              onToggleClause={handleToggleClause}
-            />
+                <HeatmapViewer
+                  clauses={clauses}
+                  filter={categoryFilter}
+                  onToggleClause={handleToggleClause}
+                />
+              </>
+            )}
           </div>
         </section>
 
-        {/* Right Sidebar (Constraint Lock Engine & Nutrition Facts Card) */}
+        {/* Right Sidebar (Constraint Lock, Nutrition Facts, & 1-Click Export) */}
         <aside className="lg:col-span-5 xl:col-span-4 space-y-4">
           {/* Slice 2: Constraint Lock Engine */}
           <ConstraintLockBadge
@@ -158,6 +212,13 @@ export const App: React.FC = () => {
             duplicateTrimmed={trimmedCounts.duplicate}
             verboseCount={counts.verbose}
             verboseTrimmed={trimmedCounts.verbose}
+          />
+
+          {/* Slice 4: 1-Click Export Action */}
+          <ExportAction
+            clauses={clauses}
+            tokensSaved={metrics.tokensSaved}
+            percentSaved={metrics.percentSaved}
           />
         </aside>
       </main>

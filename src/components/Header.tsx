@@ -6,6 +6,7 @@ interface HeaderProps {
   presets: PresetPrompt[];
   activePresetId: string | null;
   onSelectPreset: (preset: PresetPrompt) => void;
+  onOpenCustom: () => void;
   onReset: () => void;
 }
 
@@ -13,6 +14,7 @@ export const Header: React.FC<HeaderProps> = ({
   presets,
   activePresetId,
   onSelectPreset,
+  onOpenCustom,
   onReset,
 }) => {
   return (
@@ -62,6 +64,18 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             );
           })}
+
+          <button
+            onClick={onOpenCustom}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 border ${
+              activePresetId === 'custom'
+                ? 'bg-emerald-500 text-zinc-950 border-emerald-400 font-semibold shadow'
+                : 'bg-zinc-800/80 text-zinc-300 border-zinc-700 hover:bg-zinc-750 hover:text-white hover:border-zinc-600'
+            }`}
+            title="Paste and analyze your own prompt"
+          >
+            <span>+ Custom Prompt</span>
+          </button>
 
           <button
             onClick={onReset}

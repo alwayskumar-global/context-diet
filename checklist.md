@@ -29,7 +29,7 @@ Build mode: fast
   Learner check: Toggle a Green hard constraint in the heatmap and confirm the high-contrast alert banner fires immediately.
   Commit: `Implement Constraint Lock safety verification`
 
-- [ ] **3. Prompt Nutrition Facts card with token savings and dynamic monthly USD cost slider**
+- [x] **3. Prompt Nutrition Facts card with token savings and dynamic monthly USD cost slider**
   Becomes usable: FDA-style Nutrition Facts card displaying original tokens, diet tokens, % reduction, an interactive requests-per-day slider, and live monthly USD dollar savings.
   Why now: Completes the core value proposition: translating prompt diet into measurable developer ROI and token reduction.
   PRD ref: `prd.md > 4. Prompt Nutrition Facts & Monthly Dollar Savings`
@@ -51,7 +51,7 @@ Build mode: fast
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — Slice 2 (interactive heatmap & constraint lock alert)
+- [x] Early usable behavior explored — Slice 2 (interactive heatmap & constraint lock alert)
 - [ ] Final kick-the-tires exploration and feedback completed — Slice 4 (complete end-to-end app)
 
 ## Final Review
