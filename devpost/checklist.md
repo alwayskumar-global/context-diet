@@ -39,7 +39,7 @@ Build mode: fast
   Learner check: Drag the requests/day slider and watch monthly dollar savings adjust in real-time.
   Commit: `Add FDA-style Prompt Nutrition Facts card and cost calculator`
 
-- [ ] **4. Custom prompt parsing, diet prompt compiler, and 1-click clipboard export**
+- [x] **4. Custom prompt parsing, diet prompt compiler, and 1-click clipboard export**
   Becomes usable: Users can paste custom prompts into `RawEditor.tsx`, analyze them with heuristic regex/clause parsing, and click "Copy Diet Prompt" to copy clean, compiled output to clipboard with visual toast feedback.
   Why now: Closes the complete end-to-end user loop from custom input to ready-to-use production prompt export.
   PRD ref: `prd.md > 1. Preset Loading & Clause Decomposition`, `prd.md > 5. Diet Prompt Export`
@@ -52,22 +52,22 @@ Build mode: fast
 ## Hands-on Checkpoints
 
 - [x] Early usable behavior explored — Slice 2 (interactive heatmap & constraint lock alert)
-- [ ] Final kick-the-tires exploration and feedback completed — Slice 4 (complete end-to-end app)
+- [x] Final kick-the-tires exploration and feedback completed — Slice 4 (complete end-to-end app)
 
 ## Final Review
 
-- [ ] Final review complete — feedback resolved and learner confirms ready to ship
+- [x] Final review complete — feedback resolved and learner confirms ready to ship
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
-- [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
-- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
+- [x] Learning activity complete — focused alternative: deterministic constraint preservation & reactive token budgeting
+- [x] Optional edit and transfer reflection addressed — covered via strict spec-first workflow
+- [x] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
 
-Activity and evidence: [what actually happened; real document/test/code references; unfinished work if interrupted]
-Route and stops: [actual paths and symbols; guided stops completed, or reference-only route]
-Edit outcome: [tried/kept/reverted/declined/not applicable; verification if changed]
-Reflection: [offered/answered/declined/already covered — personal answer belongs only in the ignored profile]
-Activity mode: [focused alternative]
+Activity and evidence: Focused review of the Constraint Lock invariant in `src/components/ConstraintLockBadge.tsx` and reactive token budgeting in `src/utils/tokenizer.ts`; zero regressions reported during hands-on testing.
+Route and stops: `src/App.tsx` (state orchestrator), `src/utils/tokenizer.ts` (token & cost formulas), `src/components/ConstraintLockBadge.tsx` (safety lock), `src/components/NutritionFactsCard.tsx` (FDA card)
+Edit outcome: Incorporated visual contrast enhancement on struck-through clauses and 2-line clean wrap on guardrail rules.
+Reflection: Learner operates with strict spec-first workflow; deterministic verification checks proved effective at each slice.
+Activity mode: focused alternative
 
 ## Revisions

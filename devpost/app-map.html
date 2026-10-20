@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ContextDiet — App Map & Architecture Guide</title>
+  <style>
+    :root {
+      --bg: #09090b;
+      --card-bg: #18181b;
+      --border: #27272a;
+      --text: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --emerald: #10b981;
+      --emerald-bg: rgba(16, 185, 129, 0.1);
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --amber: #f59e0b;
+      --mono: 'JetBrains Mono', Menlo, Consolas, monospace;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+    }
+    h1 {
+      font-size: 1.85rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #fff;
+    }
+    .badge {
+      font-size: 0.75rem;
+      font-family: var(--mono);
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: var(--emerald-bg);
+      color: var(--emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    p.lead {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 0.5rem;
+    }
+    section {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.75rem;
+    }
+    h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .diagram-container {
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      text-align: center;
+    }
+    svg text {
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+    .route-grid {
+      display: grid;
+      gap: 1rem;
+    }
+    .route-item {
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.3);
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    .route-title {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--emerald);
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+    .route-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .code-ref {
+      font-family: var(--mono);
+      background: #000;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      border: 1px solid #333;
+      font-size: 0.8rem;
+      color: #e4e4e7;
+    }
+    details {
+      margin-top: 0.5rem;
+    }
+    summary {
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: var(--emerald);
+      font-family: var(--mono);
+      font-weight: 600;
+    }
+    ul.check-list {
+      list-style: none;
+      margin-top: 0.75rem;
+      display: grid;
+      gap: 0.5rem;
+    }
+    ul.check-list li {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 0.5rem;
+    }
+    ul.check-list li strong {
+      color: var(--text);
+    }
+    .fda-preview {
+      background: #fff;
+      color: #000;
+      border: 4px solid #000;
+      padding: 0.75rem;
+      border-radius: 2px;
+      font-family: var(--sans);
+      font-weight: 900;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      display: inline-block;
+      margin-top: 0.5rem;
+    }
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-family: var(--mono);
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ContextDiet <span class="badge">App Map & Architecture</span></h1>
+      <p class="lead">Interactive visual linter & FDA-style nutrition facts for LLM system prompts and agent instructions.</p>
+    </header>
+
+    <!-- Architecture & Data Flow -->
+    <section>
+      <h2>System Data Flow Diagram</h2>
+      <div class="diagram-container">
+        <svg viewBox="0 0 760 220" width="100%" height="220" xmlns="http://www.w3.org/2000/svg">
+          <!-- User / Presets Input -->
+          <rect x="20" y="30" width="140" height="70" rx="8" fill="#18181b" stroke="#3b82f6" stroke-width="2"/>
+          <text x="90" y="60" fill="#3b82f6" text-anchor="middle" font-weight="bold">INPUT SOURCE</text>
+          <text x="90" y="80" fill="#a1a1aa" text-anchor="middle">3 Bloated Presets</text>
+          <text x="90" y="93" fill="#a1a1aa" text-anchor="middle">or Custom Text</text>
+
+          <!-- Arrow 1 -->
+          <path d="M 160 65 L 210 65" stroke="#71717a" stroke-width="2" marker-end="url(#arrow)"/>
+
+          <!-- Clause Parsing & State -->
+          <rect x="210" y="30" width="160" height="70" rx="8" fill="#18181b" stroke="#10b981" stroke-width="2"/>
+          <text x="290" y="55" fill="#10b981" text-anchor="middle" font-weight="bold">APP ORCHESTRATOR</text>
+          <text x="290" y="73" fill="#e4e4e7" text-anchor="middle">App.tsx / State</text>
+          <text x="290" y="88" fill="#a1a1aa" text-anchor="middle">4-Color Clause Heatmap</text>
+
+          <!-- Branch to Constraint Lock -->
+          <path d="M 370 50 L 430 30 L 450 30" stroke="#71717a" stroke-width="2"/>
+          <rect x="450" y="10" width="160" height="50" rx="6" fill="#18181b" stroke="#10b981" stroke-width="1.5"/>
+          <text x="530" y="30" fill="#10b981" text-anchor="middle" font-weight="bold">CONSTRAINT LOCK</text>
+          <text x="530" y="47" fill="#a1a1aa" text-anchor="middle">100% Locked vs ⚠️ Broken</text>
+
+          <!-- Branch to Tokenizer / Nutrition -->
+          <path d="M 370 80 L 430 100 L 450 100" stroke="#71717a" stroke-width="2"/>
+          <rect x="450" y="75" width="160" height="60" rx="6" fill="#18181b" stroke="#f59e0b" stroke-width="1.5"/>
+          <text x="530" y="95" fill="#f59e0b" text-anchor="middle" font-weight="bold">NUTRITION ENGINE</text>
+          <text x="530" y="112" fill="#a1a1aa" text-anchor="middle">BPE Tokenizer + Cost</text>
+          <text x="530" y="125" fill="#a1a1aa" text-anchor="middle">Dynamic Volume Slider</text>
+
+          <!-- Converge to Output -->
+          <path d="M 610 35 L 640 65 L 660 65" stroke="#71717a" stroke-width="2"/>
+          <path d="M 610 105 L 640 65 L 660 65" stroke="#71717a" stroke-width="2"/>
+
+          <rect x="660" y="35" width="85" height="60" rx="8" fill="#10b981" stroke="#059669" stroke-width="2"/>
+          <text x="702" y="62" fill="#000" text-anchor="middle" font-weight="bold">EXPORT</text>
+          <text x="702" y="78" fill="#000" text-anchor="middle" font-size="9">1-Click Copy</text>
+
+          <!-- Bottom Legend -->
+          <text x="140" y="180" fill="#ef4444" font-weight="bold">■ Red: Fluff</text>
+          <text x="260" y="180" fill="#f59e0b" font-weight="bold">■ Amber: Duplicates</text>
+          <text x="410" y="180" fill="#3b82f6" font-weight="bold">■ Blue: Verbose Prose</text>
+          <text x="580" y="180" fill="#10b981" font-weight="bold">■ Green: Constraints</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Component Code Tour -->
+    <section>
+      <h2>Architecture & Component Map</h2>
+      <div class="route-grid">
+        <div class="route-item">
+          <div class="route-title">1. Top-Level State Orchestration</div>
+          <div class="route-desc">
+            File: <span class="code-ref">src/App.tsx</span><br>
+            Holds reactive state for active presets, clause collection, Keep/Trim toggles, and volume slider. Connects heatmap changes directly to the safety badge and token engine.
+          </div>
+        </div>
+
+        <div class="route-item">
+          <div class="route-title">2. 4-Color Clause Heatmap Viewer</div>
+          <div class="route-desc">
+            File: <span class="code-ref">src/components/HeatmapViewer.tsx</span><br>
+            Renders interactive clause spans with high-contrast strike-through on trimmed filler and reveals pre-computed concise 1-line distillations for Blue verbose prose.
+          </div>
+        </div>
+
+        <div class="route-item">
+          <div class="route-title">3. Constraint Lock Safety Guard</div>
+          <div class="route-desc">
+            File: <span class="code-ref">src/components/ConstraintLockBadge.tsx</span><br>
+            Calculates hard constraint survival ratio. Emits an immediate high-contrast alert badge (<span style="color:var(--red);">⚠️ Constraint Lock Broken: X% Preserved</span>) if any Green invariant is trimmed, complete with 1-click restore actions.
+          </div>
+        </div>
+
+        <div class="route-item">
+          <div class="route-title">4. FDA Prompt Nutrition Facts Card</div>
+          <div class="route-desc">
+            File: <span class="code-ref">src/components/NutritionFactsCard.tsx</span><br>
+            Authentic FDA packaging aesthetic with heavy black borders, gross vs diet token metrics, nutrient bloat breakdown, volume slider (1k–200k req/day), and projected monthly USD cost reduction.
+          </div>
+        </div>
+
+        <div class="route-item">
+          <div class="route-title">5. Client-Side Tokenizer & Compiler</div>
+          <div class="route-desc">
+            File: <span class="code-ref">src/utils/tokenizer.ts</span> & <span class="code-ref">src/utils/compiler.ts</span><br>
+            Fast BPE-approximate tokenizer running 100% in-browser with zero latency or API keys. Compiles surviving clauses and compressed substitutions into clean text.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- To Change This, Start Here -->
+    <section>
+      <h2>To Change This, Start Here</h2>
+      <ul class="check-list">
+        <li><strong>Add a new prompt preset:</strong> Edit <span class="code-ref">src/data/presets.ts</span> and append a new <span class="code-ref">PresetPrompt</span> object with custom categorized clauses.</li>
+        <li><strong>Adjust token pricing rates:</strong> Update the <span class="code-ref">modelTier</span> state options in <span class="code-ref">src/components/NutritionFactsCard.tsx</span>.</li>
+        <li><strong>Tune custom heuristic parsing:</strong> Modify keyword patterns and regex rules in <span class="code-ref">src/utils/parser.ts</span>.</li>
+        <li><strong>Refine heatmap styling:</strong> Adjust color utility classes in <span class="code-ref">src/components/HeatmapViewer.tsx</span>.</li>
+      </ul>
+    </section>
+
+    <!-- A Practice to Reuse -->
+    <section>
+      <h2>A Practice to Reuse</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.75rem;">
+        <strong>"Pairing Optimization with Invariant Verification":</strong> When trimming or refactoring AI prompts, developers hesitate out of fear of behavioral regression. By pairing an aggressive reduction metric (Nutrition Facts) with a strict safety check (Constraint Lock), ContextDiet guarantees that optimization never silently strips critical behavioral rules.
+      </p>
+      <p style="color: var(--text-muted); font-size: 0.85rem;">
+        <em>Evidence:</em> <span class="code-ref">src/components/ConstraintLockBadge.tsx</span> strictly guards Green clauses and flips to an immediate warning state upon any violation, creating a deterministic safety net.
+      </p>
+    </section>
+
+    <!-- Runtime Instructions -->
+    <section>
+      <h2>How to Run Locally</h2>
+      <pre style="background: #000; padding: 0.75rem; border-radius: 6px; font-family: var(--mono); font-size: 0.85rem; color: var(--emerald);">
+npm install
+npm run dev
+# Open http://localhost:5173</pre>
+    </section>
+
+    <footer>
+      ContextDiet — Devpost Learn: Build With AI Hackathon · Single-Screen Visual Prompt Linter
+    </footer>
+  </div>
+</body>
+</html>
